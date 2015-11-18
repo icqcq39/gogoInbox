@@ -39,7 +39,7 @@ to main
           [
             wait_command  password_entering
           ]
-          set_new_password  beep_alram
+          set_new_password  beep_alram  clear_command
         ]
         if command = 191
         [
@@ -66,11 +66,7 @@ end
  
 
 to set_defaultPass 
-   set passA (0)
-  set passB (0)
-  set passC (0)
-  set passD (0)
-  set default_Password (1234)
+   set default_Password (1234)
   set current_password (0)
 
 end
@@ -202,8 +198,7 @@ end
 
 to mode_check 
    waituntil [ ir  = 108  or ir  = 169   or ir  = 191  or ir  = 224    ]
-  set_command  wait 5
-  beep_alram
+  set_command  beep_alram
 
 end
  
@@ -221,7 +216,8 @@ end
 
 to locker 
    c,
-  unlock  locker_command  lock
+  on
+  unlock  locker_command  lock  off
 
 end
  
@@ -247,16 +243,16 @@ to unlock
 end
  
 
-to locker_command 
-   wait 5
-  waituntil [ ir  = 169  ]
-  set_command
+to lock 
+   seth 40
+  beep_alram
 
 end
  
 
-to lock 
-   seth 40
-  beep_alram
+to locker_command 
+   wait 5
+  waituntil [ ir  = 169  ]
+  set_command
 
 end
