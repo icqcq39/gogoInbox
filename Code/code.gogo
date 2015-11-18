@@ -1,0 +1,262 @@
+to main
+  set letterCount 0
+  set command 0
+  startUp  forever
+  [
+    show_letters letterCount wait 10
+    waituntil [ sensor2 > 400  or sensor3 > 500   or sensor7 > 500  or sensor8 > 500    or newir?  ]
+    if sensor2 > 400
+    [
+      repeat 3
+      [
+        beep_alram  wait 4
+      ]
+    ]
+    if sensor3 > 400
+    [
+      set letterCount (( letterCount + 1 ))
+      waituntil [ sensor3 < 100  ]
+    ]
+    if sensor8 > 1000
+    [
+      beep_alram  eject_letters
+    ]
+    if newir?
+    [
+      set_command
+    ]
+    if command = 229
+    [
+      clear_for_password  repeat 4
+      [
+        wait_command  password_entering
+      ]
+      if check_password = 1
+      [
+        mode_check  if command = 108
+        [
+          clear_for_password  repeat 4
+          [
+            wait_command  password_entering
+          ]
+          set_new_password  beep_alram
+        ]
+        if command = 191
+        [
+          eject_letters
+        ]
+        if command = 169
+        [
+          locker
+        ]
+        if command = 224
+        [
+          beep_alram
+        ]
+      ]
+    ]
+    beep_alram
+  ]
+end
+
+to startUp 
+   set_variable  set_defaultPass  set_physical  set_1DCmotor  set_2DCmotor
+
+end
+ 
+
+to set_defaultPass 
+   set passA (0)
+  set passB (0)
+  set passC (0)
+  set passD (0)
+  set default_Password (1234)
+  set current_password (0)
+
+end
+ 
+
+to show_letters :letters
+   show letters
+
+end
+ 
+
+to set_variable 
+   set letterCount (0)
+  set number_of_zero (3)
+  set command (0)
+
+end
+ 
+
+to set_physical 
+   ledon
+
+end
+ 
+
+to beep_alram 
+   repeat 3
+  [
+    beep
+    wait 1
+  ]
+
+end
+ 
+
+to set_1DCmotor 
+   a,
+  cw
+  setpower 100
+
+end
+ 
+
+to clear_for_password 
+   show "0000"
+  reset_currentPass  reset_running_variables
+
+end
+ 
+
+to reset_currentPass 
+   set current_password (0)
+
+end
+ 
+
+to set_2DCmotor 
+   b,
+  ccw
+  setpower 100
+
+end
+ 
+
+to eject_letters 
+   ab,
+  on
+  wait 30
+  waituntil [ sensor4 < 100  ]
+  off
+
+end
+ 
+
+to set_command 
+   set command (ir )
+
+end
+ 
+
+to clear_command 
+   set command (0)
+
+end
+ 
+
+to password_entering 
+   set_digit number_of_zero set number_of_zero (( number_of_zero - 1 ))
+  show_password  clear_command  beep
+
+end
+ 
+
+to show_password 
+   show current_password
+
+end
+ 
+
+to set_digit :number_of_round
+   set current_password (( current_password + ( check_digit command * ten_power number_of_round ) ))
+
+end
+ 
+
+to ten_power :power
+   set powered_ten (1)
+  repeat power
+  [
+    set powered_ten (( powered_ten * 10 ))
+  ]
+  output powered_ten
+end
+ 
+
+to wait_command 
+   wait 5
+  waituntil [ (ir  > 126) and (ir  < 138)  ]
+  set_command
+
+end
+ 
+
+to reset_running_variables 
+   set number_of_zero (3)
+
+end
+ 
+
+to mode_check 
+   waituntil [ ir  = 108  or ir  = 169   or ir  = 191  or ir  = 224    ]
+  set_command  wait 5
+  beep_alram
+
+end
+ 
+
+to set_new_password 
+   set default_Password current_password
+
+end
+ 
+
+to check_digit :digit
+  output ( ( digit + 3 ) % 10 )
+end
+ 
+
+to locker 
+   c,
+  unlock  locker_command  lock
+
+end
+ 
+
+to check_password 
+   beep_alram  ifelse current_password = default_Password
+  [
+    show "pass"
+    set isRight (1)
+  ] [
+    show "fa1l"
+    set isRight (0)
+    wait 15
+  ]
+  output isRight
+end
+ 
+
+to unlock 
+   seth 10
+  beep_alram
+
+end
+ 
+
+to locker_command 
+   wait 5
+  waituntil [ ir  = 169  ]
+  set_command
+
+end
+ 
+
+to lock 
+   seth 40
+  beep_alram
+
+end
