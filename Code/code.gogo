@@ -4,22 +4,23 @@ to main
   startUp  forever
   [
     show_letters letterCount wait 10
-    waituntil [ sensor2 > 400  or sensor3 > 300   or sensor7 > 500  or sensor8 > 500    or newir?  ]
+    waituntil [ sensor2 > 400  or sensor3 > 150   or sensor7 > 500  or sensor8 > 500    or newir?  ]
     if sensor2 > 400
     [
-      repeat 3
+      repeat 2
       [
         beep_alram  wait 4
       ]
+      show_led
     ]
-    if sensor3 > 300
+    if sensor3 > 150
     [
       set letterCount (( letterCount + 1 ))
-      show_letters letterCount waituntil [ sensor3 < 100  ]
+      show_letters letterCount show_led  waituntil [ sensor3 < 100  ]
     ]
     if sensor8 > 1000
     [
-      beep_alram
+      beep_alram  show_led
     ]
     if newir?
     [
@@ -33,7 +34,7 @@ to main
       ]
       if check_password = 1
       [
-        mode_check  if command = 108
+        mode_check  confirm2  if command = 108
         [
           clear_for_password  repeat 4
           [
@@ -59,8 +60,27 @@ to main
   ]
 end
 
+to LED_blink 
+   repeat 5
+  [
+    on
+    wait 2
+    off
+    wait 2
+  ]
+
+end
+ 
+
+to show_led 
+   d,
+  show_led
+
+end
+ 
+
 to startUp 
-   set_variable  set_defaultPass  set_physical  set_1DCmotor  set_2DCmotor
+   set_variable  set_defaultPass  set_physical
 
 end
  
@@ -72,8 +92,22 @@ to set_defaultPass
 end
  
 
+to set_LED 
+   d,
+  ccw
+
+end
+ 
+
 to show_letters :letters
    show letters
+
+end
+ 
+
+to set_physical 
+   ledon
+  set_1DCmotor  set_2DCmotor  set_LED
 
 end
  
@@ -82,12 +116,6 @@ to set_variable
    set letterCount (0)
   set number_of_zero (3)
   set command (0)
-
-end
- 
-
-to set_physical 
-   ledon
 
 end
  
@@ -127,6 +155,12 @@ to set_2DCmotor
    b,
   ccw
   setpower 100
+
+end
+ 
+
+to confirm2 
+   waituntil [ sensor7 > 1000  ]
 
 end
  
@@ -197,15 +231,8 @@ end
  
 
 to mode_check 
-   forever
-  [
-    waituntil [ ir  = 108  or ir  = 169   or ir  = 191  or ir  = 224    or sensor7 > 1000   ]
-    if sensor7 > 1000
-    [
-      stop
-    ]
-    set_command  beep_alram  mode_name
-  ]
+   waituntil [ ir  = 108  or ir  = 169   or ir  = 191  or ir  = 224    ]
+  set_command  beep_alram  mode_name
 
 end
  
@@ -302,7 +329,7 @@ end
  
 
 to decor 
-   loading
+   loading  credit
 
 end
  
