@@ -43,12 +43,10 @@ to main
         ]
         if command = 191
         [
-          show ".out"
           eject_letters
         ]
         if command = 169
         [
-          show "0pen"
           locker
         ]
         if command = 224
@@ -199,8 +197,15 @@ end
  
 
 to mode_check 
-   waituntil [ ir  = 108  or ir  = 169   or ir  = 191  or ir  = 224    ]
-  set_command  beep_alram
+   forever
+  [
+    waituntil [ ir  = 108  or ir  = 169   or ir  = 191  or ir  = 224    or sensor7 > 1000   ]
+    if sensor7 > 1000
+    [
+      stop
+    ]
+    set_command  beep_alram  mode_name
+  ]
 
 end
  
@@ -247,6 +252,27 @@ end
 
 to wait_of_loading 
    wait 5
+
+end
+ 
+
+to mode_name 
+   if command = 108
+  [
+    show "chng"
+  ]
+  if command = 191
+  [
+    show ".out"
+  ]
+  if command = 169
+  [
+    show "0pen"
+  ]
+  if command = 224
+  [
+    show "crdt"
+  ]
 
 end
  
