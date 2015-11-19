@@ -4,7 +4,7 @@ to main
   startUp  forever
   [
     show_letters letterCount wait 10
-    waituntil [ sensor2 > 400  or sensor3 > 500   or sensor7 > 500  or sensor8 > 500    or newir?  ]
+    waituntil [ sensor2 > 400  or sensor3 > 300   or sensor7 > 500  or sensor8 > 500    or newir?  ]
     if sensor2 > 400
     [
       repeat 3
@@ -12,14 +12,14 @@ to main
         beep_alram  wait 4
       ]
     ]
-    if sensor3 > 400
+    if sensor3 > 300
     [
       set letterCount (( letterCount + 1 ))
-      waituntil [ sensor3 < 100  ]
+      show_letters letterCount waituntil [ sensor3 < 100  ]
     ]
     if sensor8 > 1000
     [
-      beep_alram  eject_letters
+      beep_alram
     ]
     if newir?
     [
@@ -43,19 +43,21 @@ to main
         ]
         if command = 191
         [
+          show ".out"
           eject_letters
         ]
         if command = 169
         [
+          show "0pen"
           locker
         ]
         if command = 224
         [
-          beep_alram
+          beep_alram  decor
         ]
       ]
     ]
-    beep_alram
+    check_for_clear_letters  beep_alram
   ]
 end
 
@@ -243,6 +245,12 @@ to unlock
 end
  
 
+to wait_of_loading 
+   wait 5
+
+end
+ 
+
 to lock 
    seth 40
   beep_alram
@@ -254,5 +262,72 @@ to locker_command
    wait 5
   waituntil [ ir  = 169  ]
   set_command
+
+end
+ 
+
+to check_for_clear_letters 
+   if sensor4 < 50
+  [
+    set letterCount (0)
+  ]
+
+end
+ 
+
+to decor 
+   loading
+
+end
+ 
+
+to iiii 
+   show "iiii"
+  wait_of_loading
+
+end
+ 
+
+to iii1 
+   show "iii1"
+  wait_of_loading
+
+end
+ 
+
+to ii1i 
+   show "ii1i"
+  wait_of_loading
+
+end
+ 
+
+to loading 
+   iiii  iii1  ii1i  i1i1  repeat 2
+  [
+    my_1i1i  i1i1
+  ]
+
+end
+ 
+
+to i1i1 
+   show "i1i1"
+  wait_of_loading
+
+end
+ 
+
+to credit 
+   show "cpe"
+  wait_of_loading  show ".2i5"
+  wait_of_loading
+
+end
+ 
+
+to my_1i1i 
+   show "1i1i"
+  wait_of_loading
 
 end
